@@ -1,11 +1,14 @@
 package com.studylog.users.exception;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Map;
+import java.util.HashMap;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,9 +26,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(401).body(Map.of("error", e.getMessage()));
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, String>> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "잘못된 요청 형식입니다. JSON 형식으로 데이터를 전송해주세요.");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> handleException(Exception e) {
-        log.error("예상치 못한 오류 발생: {}", e.getMessage(), e);
-        return ResponseEntity.status(500).body(Map.of("error", "서버 오류가 발생했습니다."));
+    public ResponseEntity<Map<String, String>> handleException(Exception ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "서버 오류가 발생했습니다.");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 } 

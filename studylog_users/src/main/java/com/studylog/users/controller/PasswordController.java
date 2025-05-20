@@ -34,10 +34,10 @@ public class PasswordController {
      */
     @PostMapping("/reset")
     public ResponseEntity<Map<String, String>> resetPassword(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
+        String uEmail = request.get("uEmail");
         String newPassword = request.get("newPassword");
 
-        passwordService.resetPassword(email, newPassword);
+        passwordService.resetPassword(uEmail, newPassword);
         return ResponseEntity.ok(Map.of("message", "비밀번호가 성공적으로 변경되었습니다."));
     }
 }

@@ -30,8 +30,9 @@ public class PasswordService {
 
 
     @Transactional
-    public void resetPassword(String email, String newPassword) {
-        User user = userRepository.findByuEmail(email)
+    public void resetPassword(String uEmail, String newPassword) {
+        log.info("이메일로 사용자 조회 - 이메일: {}", uEmail);
+        User user = userRepository.findByuEmail(uEmail)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         // 새로운 비밀번호로 업데이트
@@ -45,8 +46,8 @@ public class PasswordService {
             throw new IllegalArgumentException("비밀번호 또는 인증 토큰이 유효하지 않습니다.");
         }
         String token = authHeader.substring(7);
-        String email = jwtToken.getuEmail(token);
-        User user = userRepository.findByuEmail(email)
+        String uEmail = jwtToken.getuEmail(token);
+        User user = userRepository.findByuEmail(uEmail)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
         return passwordEncoder.matches(rawPassword, user.getuPassword());
     }
